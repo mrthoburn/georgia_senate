@@ -1,1 +1,1 @@
-# georiga_senate 
+# georgia_senate 
