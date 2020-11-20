@@ -1,0 +1,78 @@
+---
+title: "Georgia"
+output: html_document
+---
+
+# Visualizing the 2020 Georgia Races with R
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Read the Data
+```{r}
+library(usmap)
+library(ggplot2)
+
+ga <- read.table('Georgia.csv',header = TRUE,sep=",")
+ga$BIDEN.VOTES <- as.numeric(gsub(",", "",ga$BIDEN.VOTES))
+ga$TRUMP.VOTES <- as.numeric(gsub(",", "",ga$TRUMP.VOTES))
+ga$OSSOFF.VOTES <- as.numeric(gsub(",", "",ga$OSSOFF.VOTES))
+ga$PERDUE.VOTES <- as.numeric(gsub(",", "",ga$PERDUE.VOTES))
+ga$WARNOCK.VOTES <- as.numeric(gsub(",", "",ga$WARNOCK.VOTES))
+ga$LOEFFLER.VOTES <- as.numeric(gsub(",", "",ga$LOEFFLER.VOTES))
+ga$fips <- ga$FIPS.Code
+
+
+head(ga)
+
+```
+
+### Discussion
+
+## Examining the Presidential Race
+
+```{r}
+ga$BIDEN.TRUMP.VOTE.DIFF <- ga$BIDEN.VOTES - ga$TRUMP.VOTES
+ga$BIDEN.TRUMP.PCT.DIFF <- ga$BIDEN.PCT - ga$TRUMP.PCT
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="BIDEN.TRUMP.PCT.DIFF") +  scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,name="Biden - Trump Percent Votes") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="BIDEN.TRUMP.VOTE.DIFF") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,name="Biden - Trump Raw Votes") + theme(legend.position = "right")
+
+```
+
+### Discussion
+
+(Doing the above for Ossoff/Perdue gives essentially an identical set of maps)
+
+## How did the senate candidates do relative to the presidential candidates?
+
+```{r}
+ga$OSSOFF.BIDEN.DIFF <- ga$OSSOFF.VOTES - ga$BIDEN.VOTES
+ga$WARNOCK.BIDEN.DIFF <- ga$WARNOCK.VOTES - ga$BIDEN.VOTES
+ga$PERDUE.TRUMP.DIFF <- ga$PERDUE.VOTES - ga$TRUMP.VOTES
+
+ga$OSSOFF.BIDEN.RATIO <- ga$OSSOFF.VOTES / ga$BIDEN.VOTES
+ga$WARNOCK.BIDEN.RATIO <- ga$WARNOCK.VOTES / ga$BIDEN.VOTES
+ga$PERDUE.TRUMP.RATIO <- ga$PERDUE.VOTES / ga$TRUMP.VOTES
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="OSSOFF.BIDEN.DIFF") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,name="Ossoff - Biden Raw Votes") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="OSSOFF.BIDEN.RATIO") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=1,name="Ossoff / Biden Vote Ratio") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="WARNOCK.BIDEN.DIFF") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,name="Warnock - Biden Raw Votes") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="WARNOCK.BIDEN.RATIO") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=1,name="Warnock / Biden Vote Ratio") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="PERDUE.TRUMP.DIFF") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=0,name="Perdue - Trump Raw Votes") + theme(legend.position = "right")
+
+plot_usmap(include = c("GA"),regions="counties",data=ga,values="PERDUE.TRUMP.RATIO") + scale_fill_gradient2(low="red",mid="white",high="blue",midpoint=1,name="Perdue / Trump Vote Ratio") + theme(legend.position = "right")
+
+```
+
+### Discussion
+
+https://www.politico.com/2020-election/results/georgia/senate/
+https://fivethirtyeight.com/features/how-georgia-turned-blue/
+Registered voters comes from secretary of state website
